@@ -36,13 +36,13 @@
                 <td>{{ solicitud.objeto.nombre }}</td>
                 <td>{{ solicitud.solicitante.username }}</td>
                 <td>
-                    <form method="post" action="{% url 'gestionar_solicitudes' %}" style="display: inline;">
-                        <input type="text" name="mensaje_contacto" placeholder="Información de contacto">
+                    <form method="post" action="{% url 'gestionar_solicitudes' %}" >
+                        <input style="display: inline;" type="text" name="mensaje_contacto" placeholder="Información de contacto">
                         <input type="hidden" name="solicitud_id" value="{{ solicitud.id }}">
-                        <button type="submit" name="accion" value="aceptar"
-                            formaction="{% url 'gestionar_solicitudes' %}?solicitud_id={{ solicitud.id }}">Aceptar</button>
-                        <button style="display: inline;" type="submit" name="accion" value="rechazar"
-                            formaction="{% url 'gestionar_solicitudes' %}?solicitud_id={{ solicitud.id }}">Rechazar</button>
+                        <button type="submit" name="accion" value="aceptar"  
+                            formaction="{% url 'gestionar_solicitudes' %}?solicitud_id={{ solicitud.id }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top"><img src="{%static 'img/check2.svg'%}" style="display: inline; color: red;">  Aceptar</button>
+                        <button style="display: inline;" type="submit" name="accion" value="rechazar" class="btn btn-danger"
+                            formaction="{% url 'gestionar_solicitudes' %}?solicitud_id={{ solicitud.id }}"><img src="{%static 'img/trash.svg'%}" style="display: inline; color: red;"> Rechazar</button>
                     </form>
                 </td>
 
@@ -51,7 +51,7 @@
         </table>
         
         {%empty%}
-            <p style="color: rgb(140, 140, 140);"><strong>No tienes solicitudes</strong></p>
+            <p style="color: rgb(140, 140, 140);"><strong>No haz hecho solicitudes todavia</strong></p>
             <img src="{%static 'img/question.png'%}" alt="">
         {% endfor %}
     </form>

@@ -4,31 +4,25 @@
 
 {% block content %}
 {%load static%}
-<section id ='contrato'>
+<section id='contrato'>
     {% if solicitudes %}
-    <table id="objetos">
-        <tr>
-            <th></th>
-            <th>objeto</th>
-            <th>Propietario</th>
-            <th>Contacto</th>
-        </tr>
+    
         {% for solicitud in solicitudes %}
-        <tr>
-            <td><img src="{{ solicitud.objeto.imagen.url }}" alt="{{ objeto.titulo }}"
-                    style="width: 200px; height: 200px;"></td>
-            <td>{{ solicitud.objeto.titulo }}</td>
-            <td>{{ solicitud.propietario.username }}</td>
-            <td>
-                {% if solicitud.mensaje_contacto %}
+        <div>
+            <h3 style="color: rgb(92, 171, 102); display: inline; margin-top: 1rem;">Tu solicitud ha sido aprobada para el objeto "{{ solicitud.objeto.nombre }}"</h3>
+            <img style="width: 2rem; display: inline; padding-top: 0;" src="{%static 'img/check.png'%}" alt="">
+            <img src="{{ solicitud.objeto.imagen.url }}" alt="{{ objeto.titulo }}">
+            <br>
+            <h4 style="text-align: start;"><strong>Puedes contactarte con "{{ solicitud.propietario.username }}" de la siguiente forma:</strong></h4>
+            <p style="text-align: start;">{% if solicitud.mensaje_contacto %}
                 {{ solicitud.mensaje_contacto }}
                 {% else %}
                 No se ha proporcionado información de contacto.
-                {% endif %}
-            </td>
-        </tr>
+                {% endif %}</p>
+        </div>
+        
         {% endfor %}
-    </table>
+    
     {% else %}
     <p>No tienes solicitudes aprobadas en este momento.</p>
     <img src="{%static 'img/question.png'%}" alt="">

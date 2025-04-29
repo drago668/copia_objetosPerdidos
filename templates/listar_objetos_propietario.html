@@ -25,7 +25,7 @@
             <li>
                 <div id="carouselExampleIndicators" class="carousel slide w-28  mx-auto"
                     class="carousel slide carousel-fade" data-ride="carousel">
-                    <div class="carousel-indicators">
+                    <div class="carousel-indicators"  style="background-color: rgb(0, 0, 0);opacity: 50%;">
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
                             class="active" aria-current="true" aria-label="Slide 1"></button>
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
@@ -57,11 +57,11 @@
                         </div>
                         {%endif%}
                     </div>
-                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <a class="carousel-control-prev"  href="#carousel{{ forloop.counter }}" role="button" data-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="sr-only"></span>
                     </a>
-                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <a class="carousel-control-next"  href="#carousel{{ forloop.counter }}" role="button" data-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="sr-only"></span>
                     </a>

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}listar objetos{% endblock %}
+{% block content %}
+{% load static %}
+
+{% for objeto in objetos %}
+{% if request.user != objeto.propietario %}
+<div class="book-item">
+  <section id="contrato">
+    <ul style="list-style-type: none;">
+      <li>
+        <h3>{{objeto.nombre }} </h3>
+      </li>
+
+      <li>
+        <div id="carousel{{ forloop.counter }}" class="carousel slide w-10  mx-auto"
+          class="carousel slide carousel-fade" data-ride="carousel">
+
+          <!-- 1) Indicadores estáticos pero condicionados -->
+          <div class="carousel-indicators">
+            {% if objeto.imagen %}
+            <button type="button" data-bs-target="#carousel{{ forloop.counter }}" data-bs-slide-to="0" class="active"
+              aria-current="true" aria-label="Slide 1"></button>
+            {% endif %}
+            {% if objeto.imagen2 %}
+            <button type="button" data-bs-target="#carousel{{ forloop.counter }}" data-bs-slide-to="1"
+              aria-label="Slide 2"></button>
+            {% endif %}
+            {% if objeto.imagen3 %}
+            <button type="button" data-bs-target="#carousel{{ forloop.counter }}" data-bs-slide-to="2"
+              aria-label="Slide 3"></button>
+            {% endif %}
+          </div>
+
+          <!-- 2) Slides -->
+          <div class="carousel-inner">
+            {% if objeto.imagen %}
+            <div class="carousel-item active">
+              <img src="{{ objeto.imagen.url }}" class="d-block w-100" alt="{{ objeto.nombre }}">
+              <div class="carousel-caption d-none d-md-block">
+              </div>
+            </div>
+            {% endif %}
+            {% if objeto.imagen2 %}
+            <div class="carousel-item">
+              <img src="{{ objeto.imagen2.url }}" class="d-block w-100" alt="{{ objeto.nombre }}">
+            </div>
+            {% endif %}
+            {% if objeto.imagen3 %}
+            <div class="carousel-item">
+              <img src="{{ objeto.imagen3.url }}" class="d-block w-100" alt="{{ objeto.nombre }}">
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- 3) Controles apuntando al ID único -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ forloop.counter }}"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ forloop.counter }}"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+
+        </div>
+  </section>
+  <br>
+  </li>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}

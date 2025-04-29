@@ -5,15 +5,18 @@ from django.contrib.auth.decorators import login_required
 from .models import objeto, SolicitudPrestamo,CustomUser
 from django.contrib import messages
 from django.db.models import Q
+from django.db.models import Count
 
 @login_required
 def listar_objetos(request):
     solictudesA=SolicitudPrestamo.objects.filter(solicitante=request.user)
     query = request.GET.get('q', '')  # Obtiene el parámetro 'q' de la URL
     if query:
-        objetos = objeto.objects.filter(Q(nombre__icontains=query))
+        objetos = objeto.objects.filter(Q(nombre__icontains=query))\
+            
     else:
-        objetos = objeto.objects.exclude(propietario=request.user)  # Muestra todos los objetos si no hay búsqueda
+          
+        objetos = objeto.objects.exclude(propietario=request.user)
 
     return render(request, 'listar_objetos.html', {'objetos': objetos, 'query': query,'solicitudes':solictudesA})
 

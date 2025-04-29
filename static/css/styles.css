@@ -248,10 +248,13 @@ margin: 10px 0;
 }
 
 #id_nombre{
-    width: 60rem;
+    width: 40rem;
+}
+#id_nombre.textinput{
+    width: 28rem;
 }
 #id_descripcion{
-    width: 60rem;
+    width: 40rem;
 }
 #id_estado{
     width: 60rem;
