@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}listar objetos{% endblock %}
+
+{% block content %}
+{%load static%}
+
+<div class="book-item">
+    <h1 style="color: rgb(116, 116, 116); text-align: center;"><strong>Los objetos que otros usuarios de han reportado
+            perdidos</strong></h1>
+    <h4 style="color: rgb(116, 116, 116);  text-align: center;">Conoces alguno de estos??</h4>
+
+    <form class="d-flex mb-3" method="GET" action="{% url 'listar_objetos' %}">
+        <input class="form-control me-2" type="search" name="q" placeholder="Buscar por nombre" value="{{ request.GET.q }}">
+        <button class="btn btn-primary" type="submit">Buscar</button>
+    </form>
+    {% for objeto in objetos %}
+    {% if request.user != objeto.propietario %}
+    <section id="contrato">
+        
+        <ul style="list-style-type: none;">
+            <li>
+                <h3>{{objeto.nombre }} </h3>
+            </li>
+            {% for solicitud in solicitudes %}
+            {%if solicitud.estado == 'aceptada' %}
+            <li>
+                <div id="carouselExampleIndicators" class="carousel slide w-28  mx-auto"
+                    class="carousel slide carousel-fade" data-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                            class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                            aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                            aria-label="Slide 3"></button>
+                    </div>
+
+                    <div class="carousel-inner">
+                        {% if objeto.imagen %}
+                        <div class="carousel-item active ">
+                            <img src="{{ objeto.imagen.url }}" alt="{{ objeto.nombre }}" alt="First slide">
+                            <div class="carousel-caption d-none d-md-block">
+                            </div>
+                        </div>
+                        {%endif%}
+                        {% if objeto.imagen2 %}
+                        <div class="carousel-item">
+                            <img src="{{ objeto.imagen2.url }}" alt="{{ objeto.nombre }}" alt="Second slide">
+                            <div class="carousel-caption d-none d-md-block">
+                            </div>
+                        </div>
+                        {%endif%}
+                        {% if objeto.imagen3 %}
+                        <div class="carousel-item">
+                            <img src="{{ objeto.imagen3.url }}" alt="{{ objeto.nombre }}" alt="Third slide">
+                            <div class="carousel-caption d-none d-md-block">
+                            </div>
+                        </div>
+                        {%endif%}
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only"></span>
+                    </a>
+                </div>
+            </li>
+
+            {%endif%}
+            {%endfor%}
+            <li>
+                <h3 style="text-align: left;">descripcion</h3>
+            </li>
+            <li>
+                <p style="text-align: left;"> {{ objeto.descripcion }}</p>
+            </li>
+
+
+
+
+            {% if objeto.id %}
+            <form id="solicitud-form" style="margin-left: 0;margin-right: 0; width: 100rem;" data-id="{{ objeto.id }}"
+                method="post" action="{% url 'solicitar_prestamo' objeto.id %}">
+                {% csrf_token %}
+
+                <div class="container text-center">
+                    <div class="row justify-content-md-center">
+                        <div class="col-sm-10">
+                            <div class="mb-3">
+                                <textarea class="form-control" rows="3" name="Mensaje_de_objeto"
+                                    id="Mensaje_de_objeto"></textarea>
+                                <label for="Mensaje_de_objeto" class="form-label"> crees que es tuyo? describelo y puede
+                                    que tengas
+                                    suerte</label>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4" style="padding-top: 0.1rem;width: 4rem;">
+                            <button style="display: inline;width: 4rem;" type="submit">es mio!</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </form>
+            {% else %}
+            <p>Error: Este objeto no tiene un identificador válido.</p>
+            {% endif %}
+
+
+        </ul>
+    </section>
+    <br>
+
+</div>
+
+{%endif%}
+{%empty %}
+<section id="contrato">
+    <p style="color: rgb(140, 140, 140);"><strong>No hay objetos perdidos</strong></p>
+    <img src="{%static 'img/question.png'%}" alt="">
+</section>
+<script>
+    // Recupera el ID del atributo 'data-solicitud-id'
+    const solicitudForm = document.getElementById('solicitud-form');
+    const solicitudId = solicitudForm.dataset.id;
+    console.log("ID de la solicitud (desde el formulario):", solicitudId);
+</script>
+{% endfor %}
+
+{%endblock %}

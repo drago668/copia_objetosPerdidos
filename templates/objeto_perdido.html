@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - gestion freelancers{% endblock %}
+
+{% block content %}
+{%load static%}
+   
+    <section id="intercambio">
+    <h2>Publicar un objeto perdido</h2>
+    <form id method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" >Publicar</button>
+    </form>
+{%endblock%}

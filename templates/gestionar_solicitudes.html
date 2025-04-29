@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - gestion freelancers{% endblock %}
+
+{% block content %}
+{%load static%}
+<br>
+<br>
+
+<section id="contrato">
+    {% for solicitud in solicitudes %}
+    <form method="post">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <th></th>
+                <th>Objeto</th>
+                <th>Solicitante</th>
+                <th>Acciones</th>
+            </tr>
+            {% if messages %}
+            <div>
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <tr>
+                <td>
+                    {% if objeto.imagen %}
+                    <img src="{{ solicitud.objeto.imagen.url }}" alt="{{ objeto.titulo }}"
+                        style="width: 200px; height: 200px;">
+                    {% endif %}
+                </td>
+                <td>{{ solicitud.objeto.nombre }}</td>
+                <td>{{ solicitud.solicitante.username }}</td>
+                <td>
+                    <form method="post" action="{% url 'gestionar_solicitudes' %}" style="display: inline;">
+                        <input type="text" name="mensaje_contacto" placeholder="Información de contacto">
+                        <input type="hidden" name="solicitud_id" value="{{ solicitud.id }}">
+                        <button type="submit" name="accion" value="aceptar"
+                            formaction="{% url 'gestionar_solicitudes' %}?solicitud_id={{ solicitud.id }}">Aceptar</button>
+                        <button style="display: inline;" type="submit" name="accion" value="rechazar"
+                            formaction="{% url 'gestionar_solicitudes' %}?solicitud_id={{ solicitud.id }}">Rechazar</button>
+                    </form>
+                </td>
+
+            </tr>
+
+        </table>
+        
+        {%empty%}
+            <p style="color: rgb(140, 140, 140);"><strong>No tienes solicitudes</strong></p>
+            <img src="{%static 'img/question.png'%}" alt="">
+        {% endfor %}
+    </form>
+</section>
+
+{%endblock%}

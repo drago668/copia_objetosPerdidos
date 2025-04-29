@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}home{% endblock %}
+
+{% block content %}
+{%load static%}
+<div id="carouselExampleIndicators" class="carousel slide carousel-fade"  class="carousel slide w-75 h-50 mx-auto"data-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <!--
+    <ol class="carousel-indicators">
+      <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>-->
+    <div class="carousel-inner">
+      <div class="carousel-item active ">
+        <img class="d-block w-100" src="{% static 'img/lost.jpg'%}" alt="First slide">
+        <div class="carousel-caption d-none d-md-block">
+        <p>¿Haz perdido un preciado objeto y deseas recuperarlo?</p>
+      </div>
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="{%static 'img/Tiempouu.jpeg'%}" alt="Second slide">
+        <div class="carousel-caption d-none d-md-block">
+        <p>Prueba suerte en nuestra plataforma</p>
+      </div>
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="{%static 'img/found.jpg'%}" alt="Third slide">
+        <div class="carousel-caption d-none d-md-block">
+        <p>quiza alguien lo encontro por ti ...prueba suerte</p>
+      </div>
+      </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only"></span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only"></span>
+    </a>
+  </div>
+  
+  
+    <div  class="container">
+      <div class="row">
+        <div class="col-sm">
+      <section id="contratos">
+          <h2>¡Tu objeto perdido puede estar más cerca de lo que crees!</h2>
+          <h4></h4>
+          <p>Después de reportarlo en nuestra app, recibe alertas en tiempo real cuando alguien lo encuentre.
+            [Reportar Objeto] – ¡Haz clic y regístralo en menos de 30 segundos!
+            </p>
+          <img src="{%static 'img/encontrar.jpg'%}" alt="Contrato">
+          <br>
+          <a href="{%url 'publicar'%}" class="btn-ir">Ir a publicar</a>
+      </section>
+        </div>
+      <div class="col-sm">
+    
+      <section id="proyectos">
+          <h2>Vecinos que ayudan, corazones que se reencuentran</h2>
+          <p>Únete a una red de cientos de usuarios altruistas: notifica tu pérdida y revisa reportes de hallazgos.
+            [Ver Objetos Encontrados] – Explora las publicaciones más recientes.</p>
+          <img src="{%static 'img/vecinos.jpg'%}" alt="Proyecto">
+          <br>
+          <a href="{%url 'listar_objetos'%}" class="btn-ir">ver objetos</a>
+      </section>
+    </div>
+    <div class="col-sm">
+      <section id="tiempo">
+          <h2> Encuentra lo que perdiste con facilidad</h2>
+          <p>Explora los objetos encontrados en tu comunidad y recupera tus pertenencias rápidamente.
+
+ExplorarObjetos – Descubre si tu objeto ya ha sido encontrado.</p>
+          <img src="{%static 'img/tiemp.jpeg'%}" alt="Seguimiento de Tiempo">
+          <br>
+          <a href="{%url 'listar_objetos'%}" class="btn-ir">ver objetos</a>
+      </section>
+    </div>
+    </div>
+  
+    </div>
+  <br>
+  <br>
+  <br>
+  <br>
+
+
+
+{% endblock %}

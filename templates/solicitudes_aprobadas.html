@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - gestion freelancers{% endblock %}
+
+{% block content %}
+{%load static%}
+<section id ='contrato'>
+    {% if solicitudes %}
+    <table id="objetos">
+        <tr>
+            <th></th>
+            <th>objeto</th>
+            <th>Propietario</th>
+            <th>Contacto</th>
+        </tr>
+        {% for solicitud in solicitudes %}
+        <tr>
+            <td><img src="{{ solicitud.objeto.imagen.url }}" alt="{{ objeto.titulo }}"
+                    style="width: 200px; height: 200px;"></td>
+            <td>{{ solicitud.objeto.titulo }}</td>
+            <td>{{ solicitud.propietario.username }}</td>
+            <td>
+                {% if solicitud.mensaje_contacto %}
+                {{ solicitud.mensaje_contacto }}
+                {% else %}
+                No se ha proporcionado información de contacto.
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No tienes solicitudes aprobadas en este momento.</p>
+    <img src="{%static 'img/question.png'%}" alt="">
+    {% endif %}
+</section>
+{%endblock%}
