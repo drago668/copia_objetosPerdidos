@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.db.models import Count
 
-@login_required
+
 def listar_objetos(request):
     solictudesA=SolicitudPrestamo.objects.filter(solicitante=request.user)
     query = request.GET.get('q', '')  # Obtiene el parámetro 'q' de la URL
@@ -20,6 +20,7 @@ def listar_objetos(request):
 
     return render(request, 'listar_objetos.html', {'objetos': objetos, 'query': query,'solicitudes':solictudesA})
 
+@login_required
 def listar_objetos_prpietario(request):
     query = request.GET.get('q', '')  # Obtiene el parámetro 'q' de la URL
     if query:
@@ -62,7 +63,7 @@ def solicitar_prestamo(request, objeto_id):
         messages.error(request, "No puedes solicitar tu propio libro.")
         return redirect('listar_objetos')
 
-@login_required
+
 def index(request):
     return render(request, 'index.html')
 
