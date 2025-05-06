@@ -9,22 +9,65 @@ from django.db.models import Count
 
 
 def listar_objetos(request):
-    solictudesA=SolicitudPrestamo.objects.filter(solicitante=request.user)
-    query = request.GET.get('q', '')  # Obtiene el parámetro 'q' de la URL
-    if query:
-        objetos = objeto.objects.filter(Q(nombre__icontains=query))\
-            
+    
+    if not request.user.is_authenticated:
+        print("el susario no est autenticado")
+        objetos = objeto.objects.all()
+        return render(request, 'listar_objetos.html',{'objetos': objetos}) 
     else:
-          
-        objetos = objeto.objects.exclude(propietario=request.user)
+        solictudesA=SolicitudPrestamo.objects.filter(solicitante=request.user)
+        query = request.GET.get('q', '')  # Obtiene el parámetro 'q' de la URL
+        if query:
+              objetos = objeto.objects.filter(
+                Q(nombre__icontains=query) | Q(descripcion__icontains=query)
+            )
+                
+        else:
+            
+            objetos = objeto.objects.exclude(propietario=request.user)
+
+        # Filtrar las solicitudes aceptadas donde el usuario es solicitante
+        solicitudes_aceptadas = SolicitudPrestamo.objects.filter(
+            solicitante=request.user, estado="aceptada"
+        ).values_list('objeto_id', flat=True)  # Obtenemos los IDs de los objetos
+
+        # Modificar objetos para excluir imágenes bajo la nueva condición
+        objetos_modificados = []
+        for obj in objetos:
+            if obj.id in solicitudes_aceptadas:
+                print("holaaaaaaaaaaaaaaaaaaaaaa")
+                # Si la solicitud está aceptada, excluir imágenes
+                objetos_modificados.append({
+                    'id': obj.id,
+                    'nombre': obj.nombre,
+                    'descripcion': obj.descripcion,
+                    'propietario': obj.propietario.username,
+                    'disponible': obj.disponible,
+                })
+            else:
+                print("chaaaaaaaaaaaaaaaaaaaaaaaaaoooooooooo")
+                # Incluir toda la información, incluidas las imágenes
+                objetos_modificados.append({
+                    'id': obj.id,
+                    'nombre': obj.nombre,
+                    'descripcion': obj.descripcion,
+                    'propietario': obj.propietario.username,
+                    'disponible': obj.disponible,
+                    'imagen': obj.imagen.url if obj.imagen else None,
+                    'imagen2': obj.imagen2.url if obj.imagen2 else None,
+                    'imagen3': obj.imagen3.url if obj.imagen3 else None,
+                })
 
     return render(request, 'listar_objetos.html', {'objetos': objetos, 'query': query,'solicitudes':solictudesA})
+
 
 @login_required
 def listar_objetos_prpietario(request):
     query = request.GET.get('q', '')  # Obtiene el parámetro 'q' de la URL
     if query:
-        objetos = objeto.objects.filter(Q(nombre__icontains=query))
+        objetos = objeto.objects.filter(
+               ( Q(nombre__icontains=query) | Q(descripcion__icontains=query)) & Q(propietario=request.user)
+            )
     else:
         objetos = objeto.objects.filter(propietario=request.user)
     return render(request, 'listar_objetos_propietario.html', {'objetos': objetos, 'query': query})

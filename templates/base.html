@@ -55,9 +55,22 @@
               <a class="nav-link" href="{% url 'inicio'%}">home</a>
             </li>
             <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Objetos
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                <a class="dropdown-item" href="{%url 'listar_objetos'%}">ver objetos perdidos</a>
+                <a class="dropdown-item" href="{%url 'publicar'%}">publicar objeto <img src="{% static 'img/plus.png'%}" alt="" style="display: inline; height: 1rem;opacity: 75%;"></a>
+                <a class="dropdown-item" href="{% url 'listar_objetos_propietario'%}">Mis objetos</a>
+                <!--<div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Something else here</a>-->
+              </div>
+            </li>
+            <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-              Solicitudes
+                Solicitudes
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                 <a class="dropdown-item" href="{%url 'gestionar_solicitudes'%}">ver mis solicitudes</a>
@@ -66,25 +79,18 @@
                       <a class="dropdown-item" href="#">Something else here</a>-->
               </div>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                Objetos
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
-                <a class="dropdown-item" href="{% url 'listar_objetos_propietario'%}">Mis objetos</a>
-                <a class="dropdown-item" href="{%url 'listar_objetos'%}">ver objetos perdidos</a>
-                <a class="dropdown-item" href="{%url 'publicar'%}">+publicar objeto</a>
-                <!--<div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">Something else here</a>-->
-              </div>
-            </li>
-            <li class="mt-2">{% if request.user.is_authenticated %}
+            
+            <li class="mt-2">
+              {% if request.user.is_authenticated %}
               <form action="{% url 'logout' %}" method="post" style="display: inline;" class="cerrar_sesion">
                 {% csrf_token %}
                 <button type="submit"
                   style="display: inline; all: unset; cursor: pointer; text-decoration: underline;">Cerrar
                   sesión</button>
+              </form>
+              {%else%}
+              <form action="{%url 'login'%}">
+                <input type="submit" class="btn btn-primary" value="Inicia sesion">
               </form>
               {%endif%}
             </li>
