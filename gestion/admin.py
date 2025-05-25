@@ -9,13 +9,15 @@ class UsuarioAdmin(admin.ModelAdmin):
 #admin.site.register(Usuario, UsuarioAdmin)
 @admin.register(objeto)
 class objetoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'descripcion', 'imagen', 'imagen2','imagen3','propietario')  # Ajusta los campos según tu modelo
-    list_filter = ('nombre',)
-    search_fields = ('nombre', 'propietario')  # Habilita búsqueda
+    list_display = ('id','nombre', 'descripcion', 'imagen', 'imagen2','imagen3','propietario')  # Ajusta los campos según tu modelo
+    list_filter = ('id','nombre',)
+    search_fields = ('id','nombre', 'propietario')  # Habilita búsqueda
+    ordering = ('id',)
 
 @admin.register(SolicitudPrestamo)
-class solicitudAdmin(admin.ModelAdmin):
-    list_display = ('objeto', 'solicitante', 'propietario', 'mensaje')  # Ajusta los campos según tu modelo
-    list_filter = ('objeto',)
-
+class SolicitudAdmin(admin.ModelAdmin):
+    list_display = ('id', 'objeto_principal', 'objeto_secundario', 'solicitante', 'propietario', 'mensaje','estado')
+    list_filter = ('objeto_principal', 'propietario')  # Filtro adicional por propietario
+    search_fields = ('objeto_principal__nombre', 'solicitante__nombre', 'mensaje','estado')  # Búsqueda más detallada
+    ordering = ('id',)
 

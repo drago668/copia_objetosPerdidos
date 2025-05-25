@@ -4,61 +4,44 @@ from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from .models import objeto, SolicitudPrestamo,CustomUser
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Subquery, OuterRef
 from django.db.models import Count
 
 
 def listar_objetos(request):
     
     if not request.user.is_authenticated:
-        print("el susario no est autenticado")
+        print("el uusario no est autenticado")
         objetos = objeto.objects.all()
         return render(request, 'listar_objetos.html',{'objetos': objetos}) 
     else:
+        objetos_con_solicitudes_aceptadas = SolicitudPrestamo.objects.filter(
+        objeto_principal=OuterRef('pk'),
+        estado='aceptada'
+        ).values('objeto_principal')
+
+        objetos_propietario=objeto.objects.filter(propietario=request.user).exclude(pk__in=Subquery(objetos_con_solicitudes_aceptadas))
         solictudesA=SolicitudPrestamo.objects.filter(solicitante=request.user)
         query = request.GET.get('q', '')  # Obtiene el parámetro 'q' de la URL
         if query:
-              objetos = objeto.objects.filter(
+            objetos = objeto.objects.filter(
                 Q(nombre__icontains=query) | Q(descripcion__icontains=query)
+            ).exclude(propietario=request.user
+            ).exclude(pk__in=Subquery(objetos_con_solicitudes_aceptadas)
             )
                 
         else:
             
-            objetos = objeto.objects.exclude(propietario=request.user)
+           #objetos = objeto.objects.exclude(propietario=request.user)
+            objetos = objeto.objects.exclude(
+                propietario=request.user
+            ).exclude(
+                 pk__in=Subquery(objetos_con_solicitudes_aceptadas)
+            )
+       
+        print("Consulta SQL generada:", str(objetos.query))
 
-        # Filtrar las solicitudes aceptadas donde el usuario es solicitante
-        solicitudes_aceptadas = SolicitudPrestamo.objects.filter(
-            solicitante=request.user, estado="aceptada"
-        ).values_list('objeto_id', flat=True)  # Obtenemos los IDs de los objetos
-
-        # Modificar objetos para excluir imágenes bajo la nueva condición
-        objetos_modificados = []
-        for obj in objetos:
-            if obj.id in solicitudes_aceptadas:
-                print("holaaaaaaaaaaaaaaaaaaaaaa")
-                # Si la solicitud está aceptada, excluir imágenes
-                objetos_modificados.append({
-                    'id': obj.id,
-                    'nombre': obj.nombre,
-                    'descripcion': obj.descripcion,
-                    'propietario': obj.propietario.username,
-                    'disponible': obj.disponible,
-                })
-            else:
-                print("chaaaaaaaaaaaaaaaaaaaaaaaaaoooooooooo")
-                # Incluir toda la información, incluidas las imágenes
-                objetos_modificados.append({
-                    'id': obj.id,
-                    'nombre': obj.nombre,
-                    'descripcion': obj.descripcion,
-                    'propietario': obj.propietario.username,
-                    'disponible': obj.disponible,
-                    'imagen': obj.imagen.url if obj.imagen else None,
-                    'imagen2': obj.imagen2.url if obj.imagen2 else None,
-                    'imagen3': obj.imagen3.url if obj.imagen3 else None,
-                })
-
-    return render(request, 'listar_objetos.html', {'objetos': objetos, 'query': query,'solicitudes':solictudesA})
+    return render(request, 'listar_objetos.html', {'objetos': objetos, 'query': query,'solicitudes':solictudesA, "objetos_propietario":objetos_propietario})
 
 
 @login_required
@@ -90,17 +73,29 @@ def publicar_objeto(request):
 
 
 @login_required
-def solicitar_prestamo(request, objeto_id):
-    print("ingresooo", objeto_id)
-    Objeto= get_object_or_404(objeto, id=objeto_id)
-    if Objeto.propietario != request.user:
+def solicitar_prestamo(request, objeto_principal_id):
+    print("ingresooo",objeto_principal_id)
+    objeto_principal= get_object_or_404(objeto, id=objeto_principal_id)
+    if objeto_principal.propietario != request.user:
+        print(objeto_principal)
+        objeto_secundario_id = request.POST.get("escoger_objeto")
+        objeto_secundario = None
+        if objeto_secundario_id:
+            try:
+                print("id ",objeto_secundario_id)
+                objeto_secundario = get_object_or_404(objeto, id=int(objeto_secundario_id)) # Asegura que el ID sea válido
+            except (ValueError, objeto.DoesNotExist):
+                print("El objeto secundario seleccionado no es válido.")
+                messages.error(request, "El objeto secundario seleccionado no es válido.")
+                return redirect('listar_objetos')
         SolicitudPrestamo.objects.create(
-            objeto=Objeto,
+            objeto_principal=objeto_principal,
             solicitante=request.user,
-            propietario=Objeto.propietario,
-            mensaje=request.POST.get("Mensaje_de_objeto")
+            propietario=objeto_principal.propietario,
+            objeto_secundario=objeto_secundario,
+            #mensaje=request.POST.get("Mensaje_de_objeto")
         )
-        messages.success(request, f"Solicitud enviada para el libro '{objeto.nombre}'.")
+        messages.success(request, f"Solicitud enviada para el libro '{objeto_principal.nombre}'.")
         return redirect('listar_objetos')
     else:
         messages.error(request, "No puedes solicitar tu propio libro.")
@@ -108,7 +103,8 @@ def solicitar_prestamo(request, objeto_id):
 
 
 def index(request):
-    return render(request, 'index.html')
+    objetos = objeto.objects.all()
+    return render(request, 'index.html',{'objetos': objetos})
 
 
 
@@ -146,7 +142,7 @@ def registrar(request):
 
 @login_required
 def gestionar_solicitudes(request):
-    solicitudes = SolicitudPrestamo.objects.filter(objeto__propietario=request.user, estado='pendiente')
+    solicitudes = SolicitudPrestamo.objects.filter(objeto_principal__propietario=request.user, estado='pendiente')
 
     if request.method == 'POST':
         solicitud_id = request.POST.get('solicitud_id')
@@ -160,8 +156,10 @@ def gestionar_solicitudes(request):
         # Si no existe, maneja el error
         if not solicitud:
             return render(request, 'error.html', {'mensaje': 'No se encontró la solicitud especificada.'})
+        
+
         accion = request.POST.get('accion')
-        solicitud = get_object_or_404(SolicitudPrestamo, id=solicitud_id, objeto__propietario=request.user)
+        solicitud = get_object_or_404(SolicitudPrestamo, id=solicitud_id, objeto_principal__propietario=request.user)
 
         if accion == 'aceptar':
             mensaje_contacto = request.POST.get('mensaje_contacto')  # Capturar mensaje
@@ -171,8 +169,8 @@ def gestionar_solicitudes(request):
                     return redirect('gestionar_solicitudes')
             solicitud.estado = 'aceptada'
             solicitud.mensaje_contacto = mensaje_contacto
-            solicitud.objeto.disponible = False  # Marca el libro como no disponible
-            solicitud.objeto.save()
+            solicitud.objeto_principal.disponible = False  # Marca el libro como no disponible
+            solicitud.objeto_principal.save()
         elif accion == 'rechazar':
             solicitud.estado = 'rechazada'
         solicitud.save()

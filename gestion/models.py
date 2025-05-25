@@ -37,13 +37,29 @@ class SolicitudPrestamo(models.Model):
         ('rechazada', 'Rechazada'),
         ('devuelto', 'Devuelto'),
     ]
-    objeto = models.ForeignKey(objeto, on_delete=models.CASCADE)
+    #objeto = models.ForeignKey(objeto, on_delete=models.CASCADE)
+    objeto_principal = models.ForeignKey(objeto,
+        on_delete=models.CASCADE,
+        default=1,
+        related_name='solicitudes_principal'
+    )
+    objeto_secundario = models.ForeignKey(
+        objeto,
+        on_delete=models.CASCADE,
+        related_name='solicitudes_secundario',
+        blank=True,
+        null=True  # Opcional, si no siempre se requiere este segundo objeto
+    )
+
+
+
     solicitante = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='solicitudes_enviadas')
     propietario = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='solicitudes_recibidas')
     estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
     mensaje = models.TextField(blank=True, null=True) 
     mensaje_contacto = models.TextField(blank=True, null=True) 
+    
 
 
     def __str__(self):
-        return f"Solicitud de {self.solicitante.username} para {self.objeto.nombre}" 
+        return f"Solicitud de {self.solicitante.username} para {self.objeto_principal.nombre}" 

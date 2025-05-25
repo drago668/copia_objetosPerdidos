@@ -35,7 +35,7 @@ urlpatterns = [
     path("publicar/", publicar_objeto, name='publicar'),
     path("verMios/", listar_objetos_prpietario, name='listar_objetos_propietario'),
     path("verObjetos/", listar_objetos, name='listar_objetos'),
-    path('solicitar/<int:objeto_id>/', solicitar_prestamo, name='solicitar_prestamo'),
+    path('solicitar/<int:objeto_principal_id>/', solicitar_prestamo, name='solicitar_prestamo'),
     path('gestionar_solicitudes/', views.gestionar_solicitudes, name='gestionar_solicitudes'),
     path('solicitudes_aprobadas/', views.solicitudes_aprobadas, name='solicitudes_aprobadas'),
 ]

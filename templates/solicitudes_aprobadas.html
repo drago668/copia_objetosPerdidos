@@ -6,23 +6,55 @@
 {%load static%}
 <section id='contrato'>
     {% if solicitudes %}
-    
-        {% for solicitud in solicitudes %}
-        <div>
-            <h3 style="color: rgb(92, 171, 102); display: inline; margin-top: 1rem;">Tu solicitud ha sido aprobada para el objeto "{{ solicitud.objeto.nombre }}"</h3>
-            <img style="width: 2rem; display: inline; padding-top: 0;" src="{%static 'img/check.png'%}" alt="">
-            <img src="{{ solicitud.objeto.imagen.url }}" alt="{{ objeto.titulo }}">
-            <br>
-            <h4 style="text-align: start;"><strong>Puedes contactarte con "{{ solicitud.propietario.username }}" de la siguiente forma:</strong></h4>
-            <p style="text-align: start;">{% if solicitud.mensaje_contacto %}
-                {{ solicitud.mensaje_contacto }}
-                {% else %}
-                No se ha proporcionado información de contacto.
-                {% endif %}</p>
+
+    {% for solicitud in solicitudes %}
+    <div>
+        <h4 style="color: rgb(92, 171, 102); display: inline; margin-top: 1rem;">Tu solicitud de intercambio ha sido
+            aprobada para intercambiar tu "{{ solicitud.objeto_secundario.nombre }}" por el "{{solicitud.objeto_principal.nombre }}" del usuario "{{ solicitud.propietario.username }}" </h4>
+        <img style="width: 2rem; display: inline; padding-top: 0;" src="{%static 'img/check.png'%}" alt="">
+        <div style="padding-left: 4rem;">
+            <br><br>
+            <table>
+                <tr>
+                    <td>
+                        <h4>{{solicitud.objeto_principal.nombre}}</h4>
+                        {% if solicitud.objeto_principal.imagen %}
+                        <img src="{{ solicitud.objeto_principal.imagen.url }}" alt="{{ objeto.titulo }}"
+                            style="width: 200px; height: 200px;">
+                        {% endif %}
+                    </td>
+                    <td>
+                        <h4>por</h4>
+                        <img src="{% static 'img/change.png'%}" alt="" style="width:  50%;">
+                    </td>
+
+                    <td>
+                        <h2>{{solicitud.objeto_secundario.nombre}}</h2>
+                        <img src="{{ solicitud.objeto_secundario.imagen.url }}" alt="{{ objeto.titulo }}"
+                            style="width: 200px; height: 200px;">
+                    </td>
+
+
+                </tr>
+
+            </table>
         </div>
-        
-        {% endfor %}
-    
+
+
+
+
+
+        <br>
+        <h4 style="text-align: start;"><strong>El usuario <h4 style="display: inline; color: rgb(123, 204, 134);">"{{ solicitud.propietario.username }}" </h4> proporciono la siguiente informacion de contacto</strong></h4>
+        <p style="text-align: start;">{% if solicitud.mensaje_contacto %}
+            {{ solicitud.mensaje_contacto }}
+            {% else %}
+            No se ha proporcionado información de contacto.
+            {% endif %}</p>
+    </div>
+
+    {% endfor %}
+
     {% else %}
     <p>No tienes solicitudes aprobadas en este momento.</p>
     <img src="{%static 'img/question.png'%}" alt="">
